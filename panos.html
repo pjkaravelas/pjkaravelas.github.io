@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple Routes on Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <style>
+    html, body, #map {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  <script>
+    // Initialize the map and set view to a specific location
+    var map = L.map('map').setView([37.9409, 23.6474], 13);
+php
+Copy code
+// Add OpenStreetMap tile layer to the map
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// Define the locations with their coordinates
+var locations = [
+  { name: 'Location 1', lat: 37.93732400519941, lng: 23.644065096396574 },
+  { name: 'Location 2', lat: 37.93750361308489, lng: 23.644672582903432 },
+  { name: 'Location 3', lat: 37.94856979787063, lng: 23.647336359042868 },
+  { name: 'Location 7', lat: 37.93256298060324, lng: 23.645983882903312 },
+  { name: 'Location 8', lat: 37.94538530066677, lng: 23.646828225232582 },
+  { name: 'Location 9', lat: 37.94352644706798, lng: 23.64681764057477 },
+  { name: 'Location 13', lat: 37.93122722249776, lng: 23.627170234764044 },
+  { name: 'Location 14', lat: 37.938066478294886, lng: 23.646256389720346 },
+  { name: 'Location 15', lat: 37.937788604129636, lng: 23.658801152218736 }
+];
+
+// Custom marker icons for each group of pins
+var markerIcon1 = L.icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  shadowSize: [41, 41],
+  shadowAnchor: [12, 41],
+  popupAnchor: [1, -34]
+});
+
+var markerIcon2 = L.icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  shadowSize: [41, 41],
+  shadowAnchor: [12, 41],
+  popupAnchor: [1, -34]
+});
+
+var markerIcon3 = L.icon({
+  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  shadowSize: [41, 41],
+  shadowAnchor: [12, 41],
+  popupAnchor: [1, -34]
+});
+
+// Add markers for each group of pins
+var markers1 = locations.slice(0, 3).map(function(location) {
+  var marker = L.marker([location.lat, location.lng], { icon: markerIcon1 }).addTo(map);
+  marker.bindPopup('<h3>' + location.name + '</h3><a href="' + location.name.replace(/\s+/g, '') + '.html">Read More</a>');
+  return marker;
+});
+
+var markers2 = locations.slice(3, 6).map(function(location) {
+  var marker = L.marker([location.lat, location.lng], { icon: markerIcon2 }).addTo(map);
+  marker.bindPopup('<h3>' + location.name + '</h3><a href="' + location.name.replace(/\s+/g, '') + '.html">Read More</a>');
+  return marker;
+});
+
+var markers3 = locations.slice(6).map(function(location) {
+  var marker = L.marker([location.lat, location.lng], { icon: markerIcon3 }).addTo(map);
+  marker.bindPopup('<h3>' + location.name + '</h3><a href="' + location.name.replace(/\s+/g, '') + '.html">Read More</a>');
+  return marker;
+});
+
+// Create routing control instances for each route
+var routingControl1 = L.Routing.control({
+  waypoints: [
+    L.latLng(locations[0].lat, locations[0].lng),
+    L.latLng(locations[1].lat, locations[1].lng),
+    L.latLng(locations[2].lat, locations[2].lng)
+  ],
+  routeWhileDragging: true,
+  show: false,
+  lineOptions: { styles: [{ color: 'blue', opacity: 0.6, weight: 6 }] },
+  createMarker: function() {
+    return null;
+  }
+}).addTo(map);
+
+var routingControl2 = L.Routing.control({
+  waypoints: [
+    L.latLng(locations[3].lat, locations[3].lng),
+    L.latLng(locations[4].lat, locations[4].lng),
+    L.latLng(locations[5].lat, locations[5].lng)
+  ],
+  routeWhileDragging: true,
+  show: false,
+  lineOptions: { styles: [{ color: 'green', opacity: 0.6, weight: 6 }] },
+  createMarker: function() {
+    return null;
+  }
+}).addTo(map);
+
+var routingControl3 = L.Routing.control({
+  waypoints: [
+    L.latLng(locations[6].lat, locations[6].lng),
+    L.latLng(locations[7].lat, locations[7].lng),
+    L.latLng(locations[8].lat, locations[8].lng)
+  ],
+  routeWhileDragging: true,
+  show: false,
+  lineOptions: { styles: [{ color: 'red', opacity: 0.6, weight: 6 }] },
+  createMarker: function() {
+    return null;
+  }
+}).addTo(map);
+
+// Function to handle the click event on markers
+function markerClickHandler(e) {
+  var marker = e.target;
+  marker.openPopup();
+}
+
+// Add event listeners to the markers
+markers1.forEach(function(marker) {
+  marker.on('click', markerClickHandler);
+});
+
+markers2.forEach(function(marker) {
+  marker.on('click', markerClickHandler);
+});
+
+markers3.forEach(function(marker) {
+  marker.on('click', markerClickHandler);
+});
+  </script>
+</body>
+</html>
